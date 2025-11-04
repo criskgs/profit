@@ -1,29 +1,7 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
-
-:root {
-  --brand-dark: #0B0B0B;
-  --brand-gray: #1F1F1F;
-}
-
-@media print {
-  body { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
-  .no-print { display: none !important; }
-}
-
-/* PDF layout */
-.pdf-root {
-  background: #ffffff !important;
-  color: #111827 !important;
-  font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
-}
-.h2 { font-size: 18px; font-weight: 700; margin: 8px 0; }
-.small { font-size: 12px; color: #6b7280; }
-.table { width: 100%; border-collapse: collapse; }
-.table th, .table td { border: 1px solid #e5e7eb; padding: 6px 8px; font-size: 12px; }
-.table th { background: #f3f4f6; text-align: left; }
-.row { display: flex; gap: 12px; }
-.col { flex: 1; }
-.page { page-break-after: always; }
-.page:last-child { page-break-after: auto; }
+:root{--brand-dark:#0B0B0B;--brand-gray:#1F1F1F;}
+@media print{body{-webkit-print-color-adjust:exact;print-color-adjust:exact}.no-print{display:none!important}}
+.pdf-root{background:#fff!important;color:#111827!important}
+.table{width:100%;border-collapse:collapse}.table th,.table td{border:1px solid #e5e7eb;padding:6px 8px;font-size:12px}.table th{background:#f3f4f6;text-align:left}
