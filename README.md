@@ -1,6 +1,7 @@
-# Pro Elite Distribution – Calculator profitabilitate camion (React + Vite + Tailwind)
+# Pro Elite Distribution – Calculator profitabilitate camion (PDF layout dedicat)
 
-Branding + **Export PDF** (buton în header).
+- Buton **Descarcă raport PDF** produce un PDF A4 curat (alb-negru, tabele, page breaks).
+- Raportul este un **layout separat** (nu clonă a paginii).
 
 ## Instalare & rulare
 ```bash

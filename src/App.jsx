@@ -1,16 +1,7 @@
 import React, { useMemo, useRef, useState } from "react";
 import {
-  PieChart,
-  Pie,
-  Cell,
-  Tooltip as ReTooltip,
-  ResponsiveContainer,
-  BarChart,
-  Bar,
-  XAxis,
-  YAxis,
-  CartesianGrid,
-  Legend,
+  PieChart, Pie, Cell, Tooltip as ReTooltip, ResponsiveContainer,
+  BarChart, Bar, XAxis, YAxis, CartesianGrid, Legend
 } from "recharts";
 import html2pdf from "html2pdf.js";
 
@@ -27,8 +18,12 @@ function daysBetweenInclusive(startISO, endISO) {
   return Math.max(days, 0);
 }
 
+function currency(v, frac=0) {
+  return isFinite(v) ? v.toLocaleString("ro-RO", { style: "currency", currency: "EUR", maximumFractionDigits: frac }) : "-";
+}
+
 export default function App() {
-  const reportRef = useRef(null);
+  const pdfRef = useRef(null);
   const todayISO = new Date().toISOString().slice(0, 10);
   const [data, setData] = useState({
     startDate: "2025-07-30",
@@ -70,73 +65,56 @@ export default function App() {
   ];
 
   const barData = [
-    {
-      name: "€/km",
+    { name: "€/km",
       Venit: perKm(data.revenue || 0),
       Cost_direct: perKm(directCosts),
       Cost_total: perKm(totalCostsWithOverhead),
       Profit_brut: perKm(profitBrut),
-      Profit_net: perKm(profitNet),
-    },
-    {
-      name: "€/zi",
+      Profit_net: perKm(profitNet) },
+    { name: "€/zi",
       Venit: perDay(data.revenue || 0),
       Cost_direct: perDay(directCosts),
       Cost_total: perDay(totalCostsWithOverhead),
       Profit_brut: perDay(profitBrut),
-      Profit_net: perDay(profitNet),
-    },
+      Profit_net: perDay(profitNet) },
   ];
 
-  const kpi = [
-    { label: "Zile în lucru", value: days, suffix: "zile" },
-    { label: "Km parcurși", value: data.km.toLocaleString("ro-RO"), suffix: "km" },
-    { label: "Consum estimat", value: liters.toFixed(0), suffix: "L" },
-    { label: "Venit/km", value: perKm(data.revenue).toFixed(3), suffix: "€/km" },
-    { label: "Cost/km (direct)", value: perKm(directCosts).toFixed(3), suffix: "€/km" },
-    { label: "Profit/km (net)", value: perKm(profitNet).toFixed(3), suffix: "€/km" },
-  ];
-
-  const currency = (v) => (isFinite(v) ? v.toLocaleString("ro-RO", { style: "currency", currency: "EUR", maximumFractionDigits: 0 }) : "-");
-  const currency2 = (v) => (isFinite(v) ? v.toLocaleString("ro-RO", { style: "currency", currency: "EUR", maximumFractionDigits: 2 }) : "-");
-
-  function setField(field, value) {
-    setData((d) => ({ ...d, [field]: value }));
-  }
+  function setField(field, value) { setData((d) => ({ ...d, [field]: value })); }
 
   function downloadPDF() {
-    const element = reportRef.current;
-    if (!element) return;
     const opt = {
       margin: 10,
-      filename: `raport-profit-camion-${data.startDate}_to_${data.endDate}.pdf`,
-      image: { type: "jpeg", quality: 0.95 },
-      html2canvas: { scale: 2, useCORS: true, backgroundColor: "#0B0B0B" },
+      filename: `raport-profit-${data.startDate}_${data.endDate}.pdf`,
+      image: { type: "jpeg", quality: 0.98 },
+      html2canvas: { scale: 2, useCORS: true, backgroundColor: "#ffffff" },
       jsPDF: { unit: "mm", format: "a4", orientation: "portrait" },
       pagebreak: { mode: ["css", "legacy"] },
     };
-    html2pdf().set(opt).from(element).save();
+    html2pdf().set(opt).from(pdfRef.current).save();
   }
 
   return (
     <div className="min-h-screen bg-brand-dark text-white">
-      {/* Header brand */}
+      {/* Header */}
       <div className="bg-gradient-to-r from-brand-red to-brand-redLight sticky top-0 z-10 no-print">
         <div className="max-w-6xl mx-auto px-6 py-4 flex items-center justify-between gap-4">
           <div className="flex items-center gap-4">
             <img src={LOGO_URL} alt="Pro Elite Distribution" className="h-10 w-auto drop-shadow" />
             <div className="text-lg/6 font-semibold tracking-wide">Calculator profitabilitate camion</div>
           </div>
-          <button onClick={downloadPDF} className="px-4 py-2 rounded-xl bg-white text-black font-medium hover:opacity-90 shadow">
-            Descarcă PDF
-          </button>
+          <div className="flex items-center gap-2">
+            <button onClick={downloadPDF} className="px-4 py-2 rounded-xl bg-white text-black font-medium hover:opacity-90 shadow">
+              Descarcă raport PDF
+            </button>
+          </div>
         </div>
       </div>
 
-      {/* Content to be exported */}
-      <div ref={reportRef} className="max-w-6xl mx-auto px-6 py-6">
-        <p className="text-gray-300 mb-4">Introdu datele operaționale și vezi instant KPI-urile, costurile și profitul.</p>
+      {/* On-screen app (same as înainte, scurtat pentru claritate) */}
+      <div className="max-w-6xl mx-auto px-6 py-6">
+        <p className="text-gray-300 mb-4">Introdu datele și vezi KPI-urile. PDF-ul are layout separat, optimizat pentru print.</p>
 
+        {/* Inputs */}
         <div className="grid md:grid-cols-2 gap-4">
           <div className="bg-brand-gray p-4 rounded-2xl shadow-brand">
             <h2 className="text-xl font-semibold mb-3">Perioadă & volum</h2>
@@ -147,7 +125,7 @@ export default function App() {
               </div>
               <div>
                 <label className="text-sm text-gray-300">Data finală</label>
-                <input type="date" className="w-full mt-1 bg-neutral-900 border border-neutral-700 rounded-xl px-3 py-2" value={data.endDate} onChange={(e) => setField("endDate", e.target.value)} />
+                <input type="date" className="w-full mt-1 bg-neutral-900 border border-neutral-700 rounded-xl px-3 py-2" value={data.endDate} onChange={(e) => setField("endDate", e.target.value)} max={todayISO} />
               </div>
               <div>
                 <label className="text-sm text-gray-300">Încasări totale (€)</label>
@@ -191,95 +169,60 @@ export default function App() {
           </div>
         </div>
 
-        <div className="grid md:grid-cols-3 gap-4 mt-4">
-          {kpi.map((k) => (
-            <div key={k.label} className="bg-brand-gray p-4 rounded-2xl shadow-brand">
-              <div className="text-sm text-gray-300">{k.label}</div>
-              <div className="text-2xl font-bold mt-1">
-                {k.value} <span className="text-base font-medium text-gray-400">{k.suffix}</span>
-              </div>
-            </div>
-          ))}
+        {/* Hidden PDF report layout */}
+        <div className="hidden">
+          <PDFReport
+            ref={pdfRef}
+            data={data}
+            days={days}
+            liters={liters}
+            fuelCost={fuelCost}
+            months={months}
+            directCosts={directCosts}
+            totalCostsWithOverhead={totalCostsWithOverhead}
+            profitBrut={profitBrut}
+            profitNet={profitNet}
+            perKm={perKm}
+            perDay={perDay}
+            percent={percent}
+            costBreakdown={costBreakdown}
+          />
         </div>
 
+        {/* Live charts (screen only) */}
         <div className="grid lg:grid-cols-3 gap-4 mt-4">
           <div className="bg-brand-gray p-4 rounded-2xl shadow-brand lg:col-span-2">
-            <h2 className="text-xl font-semibold mb-3">Venituri, costuri și profit</h2>
-            <div className="grid md:grid-cols-2 gap-3">
-              <div className="bg-neutral-900 p-3 rounded-xl border border-neutral-800">
-                <div className="text-sm text-gray-300">Costuri directe</div>
-                <div className="text-2xl font-bold text-brand-red">{currency(directCosts)}</div>
-                <div className="text-sm text-gray-400 mt-1">Cost/km: {perKm(directCosts).toFixed(3)} €</div>
-              </div>
-              <div className="bg-neutral-900 p-3 rounded-xl border border-neutral-800">
-                <div className="text-sm text-gray-300">Costuri totale (cu alte costuri)</div>
-                <div className="text-2xl font-bold">{currency(totalCostsWithOverhead)}</div>
-                <div className="text-sm text-gray-400 mt-1">Cost/km: {perKm(totalCostsWithOverhead).toFixed(3)} €</div>
-              </div>
-              <div className="bg-neutral-900 p-3 rounded-xl border border-neutral-800">
-                <div className="text-sm text-gray-300">Profit brut</div>
-                <div className="text-2xl font-bold text-emerald-400">{currency(profitBrut)}</div>
-                <div className="text-sm text-gray-400 mt-1">Marjă brută: {percent(profitBrut, data.revenue).toFixed(1)}%</div>
-              </div>
-              <div className="bg-neutral-900 p-3 rounded-xl border border-neutral-800">
-                <div className="text-sm text-gray-300">Profit net</div>
-                <div className="text-2xl font-bold text-emerald-400">{currency(profitNet)}</div>
-                <div className="text-sm text-gray-400 mt-1">Marjă netă: {percent(profitNet, data.revenue).toFixed(1)}%</div>
-              </div>
-            </div>
-
-            <div className="mt-4 grid md:grid-cols-2 gap-4">
-              <div className="h-72 bg-neutral-900 border border-neutral-800 rounded-2xl p-3">
-                <ResponsiveContainer width="100%" height="100%">
-                  <BarChart data={barData}>
-                    <CartesianGrid strokeDasharray="3 3" />
-                    <XAxis dataKey="name" />
-                    <YAxis />
-                    <ReTooltip formatter={(v) => currency2(v)} />
-                    <Legend />
-                    <Bar dataKey="Venit" />
-                    <Bar dataKey="Cost_direct" />
-                    <Bar dataKey="Cost_total" />
-                    <Bar dataKey="Profit_brut" />
-                    <Bar dataKey="Profit_net" />
-                  </BarChart>
-                </ResponsiveContainer>
-              </div>
-
-              <div className="h-72 bg-neutral-900 border border-neutral-800 rounded-2xl p-3">
-                <ResponsiveContainer width="100%" height="100%">
-                  <PieChart>
-                    <Pie data={costBreakdown} dataKey="value" nameKey="name" outerRadius={85}>
-                      {costBreakdown.map((entry, index) => (
-                        <Cell key={`cell-${index}`} />
-                      ))}
-                    </Pie>
-                    <ReTooltip formatter={(v) => currency2(v)} />
-                    <Legend />
-                  </PieChart>
-                </ResponsiveContainer>
-              </div>
+            <h2 className="text-xl font-semibold mb-3">Comparativ €/km și €/zi</h2>
+            <div className="h-72 bg-neutral-900 border border-neutral-800 rounded-2xl p-3">
+              <ResponsiveContainer width="100%" height="100%">
+                <BarChart data={barData}>
+                  <CartesianGrid strokeDasharray="3 3" />
+                  <XAxis dataKey="name" />
+                  <YAxis />
+                  <ReTooltip formatter={(v) => currency(v, 2)} />
+                  <Legend />
+                  <Bar dataKey="Venit" />
+                  <Bar dataKey="Cost_direct" />
+                  <Bar dataKey="Cost_total" />
+                  <Bar dataKey="Profit_brut" />
+                  <Bar dataKey="Profit_net" />
+                </BarChart>
+              </ResponsiveContainer>
             </div>
           </div>
 
           <div className="bg-brand-gray p-4 rounded-2xl shadow-brand">
-            <h2 className="text-xl font-semibold mb-3">Detaliu costuri</h2>
-            <ul className="space-y-2">
-              <li className="flex justify-between"><span>Motorină ({liters.toFixed(0)} L)</span><span>{currency(fuelCost)}</span></li>
-              <li className="flex justify-between"><span>Toll-uri</span><span>{currency(data.tolls || 0)}</span></li>
-              <li className="flex justify-between"><span>Șofer ({days} zile × {currency2(data.driverPayPerDay)}/zi)</span><span>{currency(driverCost)}</span></li>
-              <li className="flex justify-between"><span>Rată ansamblu (~{months.toFixed(1)} luni)</span><span>{currency(rateCost)}</span></li>
-              <li className="flex justify-between"><span>Alte costuri (~{months.toFixed(1)} luni)</span><span>{currency(overheadCost)}</span></li>
-            </ul>
-            <div className="border-t border-neutral-800 mt-3 pt-3 flex justify-between font-semibold">
-              <span>Total costuri</span>
-              <span>{currency(totalCostsWithOverhead)}</span>
-            </div>
-            <div className="mt-3 p-3 bg-neutral-900 rounded-xl text-sm text-gray-300 border border-neutral-800">
-              <p>
-                <strong>Sfaturi:</strong> testează sensibilitatea prin modificarea consumului, prețului motorinei și a costurilor lunare.
-                Vezi cum se schimbă profitul/km și marjele.
-              </p>
+            <h2 className="text-xl font-semibold mb-3">Defalcare costuri</h2>
+            <div className="h-72 bg-neutral-900 border border-neutral-800 rounded-2xl p-3">
+              <ResponsiveContainer width="100%" height="100%">
+                <PieChart>
+                  <Pie data={costBreakdown} dataKey="value" nameKey="name" outerRadius={85}>
+                    {costBreakdown.map((entry, index) => (<Cell key={index} />))}
+                  </Pie>
+                  <ReTooltip formatter={(v) => currency(v, 2)} />
+                  <Legend />
+                </PieChart>
+              </ResponsiveContainer>
             </div>
           </div>
         </div>
@@ -291,3 +234,80 @@ export default function App() {
     </div>
   );
 }
+
+/** PDF-only report component (white A4, tables, page breaks) */
+const PDFReport = React.forwardRef(function PDFReport(props, ref) {
+  const { data, days, liters, fuelCost, months, directCosts, totalCostsWithOverhead,
+    profitBrut, profitNet, perKm, perDay, percent, costBreakdown } = props;
+
+  return (
+    <div ref={ref} className="pdf-root" style={{ padding: 12 }}>
+      {/* Page 1: Header + Summary */}
+      <div className="page">
+        <div style={{ display:'flex', alignItems:'center', gap:12, marginBottom:12 }}>
+          <img src={LOGO_URL} alt="Pro Elite Distribution" style={{ height: 36 }} />
+          <div style={{ fontWeight:700, fontSize:16 }}>Raport profitabilitate camion</div>
+        </div>
+        <div className="small">Perioadă: {data.startDate} – {data.endDate}</div>
+
+        <div className="h2">Rezumat financiar</div>
+        <table className="table">
+          <tbody>
+            <tr><th>Încasări</th><td>{currency(data.revenue)}</td></tr>
+            <tr><th>Costuri directe</th><td>{currency(directCosts)}</td></tr>
+            <tr><th>Profit brut</th><td>{currency(profitBrut)}</td></tr>
+            <tr><th>Costuri totale (cu alte costuri)</th><td>{currency(totalCostsWithOverhead)}</td></tr>
+            <tr><th>Profit net</th><td>{currency(profitNet)}</td></tr>
+            <tr><th>Marjă brută</th><td>{percent(profitBrut, data.revenue).toFixed(1)}%</td></tr>
+            <tr><th>Marjă netă</th><td>{percent(profitNet, data.revenue).toFixed(1)}%</td></tr>
+          </tbody>
+        </table>
+
+        <div className="h2">Indicatori operaționali</div>
+        <table className="table">
+          <tbody>
+            <tr><th>Zile în lucru</th><td>{days} zile</td></tr>
+            <tr><th>Kilometri</th><td>{data.km.toLocaleString("ro-RO")} km</td></tr>
+            <tr><th>Consum estimat</th><td>{Math.round(liters)} L</td></tr>
+            <tr><th>Venit/km</th><td>{perKm(data.revenue).toFixed(3)} €/km</td></tr>
+            <tr><th>Cost/km (direct)</th><td>{perKm(directCosts).toFixed(3)} €/km</td></tr>
+            <tr><th>Profit/km (net)</th><td>{perKm(profitNet).toFixed(3)} €/km</td></tr>
+            <tr><th>Profit/zi (net)</th><td>{perDay(profitNet).toFixed(0)} €/zi</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      {/* Page 2: Cost breakdown */}
+      <div className="page">
+        <div className="h2">Detaliu costuri</div>
+        <table className="table">
+          <thead>
+            <tr>
+              <th>Categoria</th>
+              <th>Suma</th>
+              <th>Pondere</th>
+            </tr>
+          </thead>
+          <tbody>
+            {costBreakdown.map((c) => (
+              <tr key={c.name}>
+                <td>{c.name}</td>
+                <td>{currency(c.value)}</td>
+                <td>{((c.value / (directCosts + (data.extraOverheadMonthly ? (months * data.extraOverheadMonthly) : 0))) * 100 || 0).toFixed(1)}%</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+
+        <div style={{ marginTop: 12 }} className="small">
+          Notă: Valorile sunt estimative și depind de consum, preț motorină și taxe lunare.
+        </div>
+      </div>
+
+      {/* Footer on last page */}
+      <div style={{ textAlign:'center', fontSize:12, color:'#6b7280', marginTop:8 }}>
+        Cristian Mandoiu, Pro Elite Ditribution 2025
+      </div>
+    </div>
+  );
+});
