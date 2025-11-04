@@ -3,8 +3,6 @@
 @tailwind utilities;
 
 :root {
-  --brand-red: #D20E11;
-  --brand-red-light: #FF2A2A;
   --brand-dark: #0B0B0B;
   --brand-gray: #1F1F1F;
 }
@@ -14,37 +12,18 @@
   .no-print { display: none !important; }
 }
 
-/* PDF layout helper */
+/* PDF layout */
 .pdf-root {
-  background: white !important;
-  color: #111827 !important; /* gray-800 */
-  font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol';
+  background: #ffffff !important;
+  color: #111827 !important;
+  font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
 }
-.table {
-  width: 100%;
-  border-collapse: collapse;
-}
-.table th, .table td {
-  border: 1px solid #e5e7eb; /* gray-200 */
-  padding: 8px 10px;
-  font-size: 12px;
-}
-.table th {
-  background: #f3f4f6; /* gray-100 */
-  text-align: left;
-}
-.h2 {
-  font-size: 18px;
-  font-weight: 700;
-  margin: 16px 0 8px;
-}
-.small {
-  font-size: 12px;
-  color: #6b7280; /* gray-500 */
-}
-.page {
-  page-break-after: always;
-}
-.page:last-child {
-  page-break-after: auto;
-}
+.h2 { font-size: 18px; font-weight: 700; margin: 8px 0; }
+.small { font-size: 12px; color: #6b7280; }
+.table { width: 100%; border-collapse: collapse; }
+.table th, .table td { border: 1px solid #e5e7eb; padding: 6px 8px; font-size: 12px; }
+.table th { background: #f3f4f6; text-align: left; }
+.row { display: flex; gap: 12px; }
+.col { flex: 1; }
+.page { page-break-after: always; }
+.page:last-child { page-break-after: auto; }

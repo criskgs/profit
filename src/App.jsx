@@ -5,7 +5,7 @@ import {
 } from "recharts";
 import html2pdf from "html2pdf.js";
 
-const LOGO_URL = "https://proelitedistribution.ro/wp-content/uploads/2025/10/proelite-logo-2-scaled.png";
+const LOGO_URL = "/logo-proelite.png"; // logo PNG transparent local
 
 function daysBetweenInclusive(startISO, endISO) {
   if (!startISO || !endISO) return 0;
@@ -83,40 +83,40 @@ export default function App() {
 
   function downloadPDF() {
     const opt = {
-      margin: 10,
+      margin: [10, 10, 10, 10],
       filename: `raport-profit-${data.startDate}_${data.endDate}.pdf`,
       image: { type: "jpeg", quality: 0.98 },
       html2canvas: { scale: 2, useCORS: true, backgroundColor: "#ffffff" },
-      jsPDF: { unit: "mm", format: "a4", orientation: "portrait" },
+      jsPDF: { unit: "mm", format: "a4", orientation: "landscape" },
       pagebreak: { mode: ["css", "legacy"] },
     };
     html2pdf().set(opt).from(pdfRef.current).save();
   }
 
   return (
-    <div className="min-h-screen bg-brand-dark text-white">
-      {/* Header */}
-      <div className="bg-gradient-to-r from-brand-red to-brand-redLight sticky top-0 z-10 no-print">
+    <div className="min-h-screen bg-[color:var(--brand-dark)] text-white">
+      {/* Header negru + linie gri subtile */}
+      <div className="bg-black border-b border-[#2d2d2d] sticky top-0 z-10 no-print">
         <div className="max-w-6xl mx-auto px-6 py-4 flex items-center justify-between gap-4">
           <div className="flex items-center gap-4">
-            <img src={LOGO_URL} alt="Pro Elite Distribution" className="h-10 w-auto drop-shadow" />
+            <img src={LOGO_URL} alt="Pro Elite Distribution" className="h-10 w-auto" />
             <div className="text-lg/6 font-semibold tracking-wide">Calculator profitabilitate camion</div>
           </div>
           <div className="flex items-center gap-2">
             <button onClick={downloadPDF} className="px-4 py-2 rounded-xl bg-white text-black font-medium hover:opacity-90 shadow">
-              Descarcă raport PDF
+              Descarcă raport PDF (landscape)
             </button>
           </div>
         </div>
       </div>
 
-      {/* On-screen app (same as înainte, scurtat pentru claritate) */}
+      {/* Conținut */}
       <div className="max-w-6xl mx-auto px-6 py-6">
-        <p className="text-gray-300 mb-4">Introdu datele și vezi KPI-urile. PDF-ul are layout separat, optimizat pentru print.</p>
+        <p className="text-gray-300 mb-4">Introdu datele și vezi KPI-urile. Raportul PDF are layout dedicat (landscape).</p>
 
         {/* Inputs */}
         <div className="grid md:grid-cols-2 gap-4">
-          <div className="bg-brand-gray p-4 rounded-2xl shadow-brand">
+          <div className="bg-[color:var(--brand-gray)] p-4 rounded-2xl shadow-brand">
             <h2 className="text-xl font-semibold mb-3">Perioadă & volum</h2>
             <div className="grid grid-cols-2 gap-3">
               <div>
@@ -138,7 +138,7 @@ export default function App() {
             </div>
           </div>
 
-          <div className="bg-brand-gray p-4 rounded-2xl shadow-brand">
+          <div className="bg-[color:var(--brand-gray)] p-4 rounded-2xl shadow-brand">
             <h2 className="text-xl font-semibold mb-3">Costuri unitare</h2>
             <div className="grid grid-cols-2 gap-3">
               <div>
@@ -169,7 +169,26 @@ export default function App() {
           </div>
         </div>
 
-        {/* Hidden PDF report layout */}
+        {/* KPI + Profit cards on-screen */}
+        <div className="grid md-grid-cols-3 md:grid-cols-3 gap-4 mt-4">
+          <div className="bg-[color:var(--brand-gray)] p-4 rounded-2xl shadow-brand">
+            <div className="text-sm text-gray-300">Costuri directe</div>
+            <div className="text-2xl font-bold text-brand-red">{currency(directCosts)}</div>
+            <div className="text-sm text-gray-400">Cost/km: {perKm(directCosts).toFixed(3)} €</div>
+          </div>
+          <div className="bg-[color:var(--brand-gray)] p-4 rounded-2xl shadow-brand">
+            <div className="text-sm text-gray-300">Profit brut</div>
+            <div className="text-2xl font-bold text-emerald-400">{currency(profitBrut)}</div>
+            <div className="text-sm text-gray-400">Marjă brută: {percent(profitBrut, data.revenue).toFixed(1)}%</div>
+          </div>
+          <div className="bg-[color:var(--brand-gray)] p-4 rounded-2xl shadow-brand">
+            <div className="text-sm text-gray-300">Profit net</div>
+            <div className="text-2xl font-bold text-emerald-400">{currency(profitNet)}</div>
+            <div className="text-sm text-gray-400">Marjă netă: {percent(profitNet, data.revenue).toFixed(1)}%</div>
+          </div>
+        </div>
+
+        {/* Hidden PDF layout (landscape) */}
         <div className="hidden">
           <PDFReport
             ref={pdfRef}
@@ -185,46 +204,7 @@ export default function App() {
             perKm={perKm}
             perDay={perDay}
             percent={percent}
-            costBreakdown={costBreakdown}
           />
-        </div>
-
-        {/* Live charts (screen only) */}
-        <div className="grid lg:grid-cols-3 gap-4 mt-4">
-          <div className="bg-brand-gray p-4 rounded-2xl shadow-brand lg:col-span-2">
-            <h2 className="text-xl font-semibold mb-3">Comparativ €/km și €/zi</h2>
-            <div className="h-72 bg-neutral-900 border border-neutral-800 rounded-2xl p-3">
-              <ResponsiveContainer width="100%" height="100%">
-                <BarChart data={barData}>
-                  <CartesianGrid strokeDasharray="3 3" />
-                  <XAxis dataKey="name" />
-                  <YAxis />
-                  <ReTooltip formatter={(v) => currency(v, 2)} />
-                  <Legend />
-                  <Bar dataKey="Venit" />
-                  <Bar dataKey="Cost_direct" />
-                  <Bar dataKey="Cost_total" />
-                  <Bar dataKey="Profit_brut" />
-                  <Bar dataKey="Profit_net" />
-                </BarChart>
-              </ResponsiveContainer>
-            </div>
-          </div>
-
-          <div className="bg-brand-gray p-4 rounded-2xl shadow-brand">
-            <h2 className="text-xl font-semibold mb-3">Defalcare costuri</h2>
-            <div className="h-72 bg-neutral-900 border border-neutral-800 rounded-2xl p-3">
-              <ResponsiveContainer width="100%" height="100%">
-                <PieChart>
-                  <Pie data={costBreakdown} dataKey="value" nameKey="name" outerRadius={85}>
-                    {costBreakdown.map((entry, index) => (<Cell key={index} />))}
-                  </Pie>
-                  <ReTooltip formatter={(v) => currency(v, 2)} />
-                  <Legend />
-                </PieChart>
-              </ResponsiveContainer>
-            </div>
-          </div>
         </div>
 
         <footer className="text-center text-gray-400 text-sm mt-8">
@@ -235,76 +215,83 @@ export default function App() {
   );
 }
 
-/** PDF-only report component (white A4, tables, page breaks) */
+/** PDF layout landscape: o singură pagină cu 2 coloane (rezumat + tabele) */
 const PDFReport = React.forwardRef(function PDFReport(props, ref) {
   const { data, days, liters, fuelCost, months, directCosts, totalCostsWithOverhead,
-    profitBrut, profitNet, perKm, perDay, percent, costBreakdown } = props;
+    profitBrut, profitNet, perKm, perDay, percent } = props;
+
+  const rowsFinance = [
+    ["Încasări", data.revenue],
+    ["Costuri directe", directCosts],
+    ["Profit brut", profitBrut],
+    ["Costuri totale", totalCostsWithOverhead],
+    ["Profit net", profitNet],
+    ["Marjă brută", percent(profitBrut, data.revenue).toFixed(1) + "%"],
+    ["Marjă netă", percent(profitNet, data.revenue).toFixed(1) + "%"],
+  ];
+
+  const rowsOps = [
+    ["Zile în lucru", days + " zile"],
+    ["Kilometri", data.km.toLocaleString("ro-RO") + " km"],
+    ["Consum estimat", Math.round(liters) + " L"],
+    ["Venit/km", perKm(data.revenue).toFixed(3) + " €/km"],
+    ["Cost/km (direct)", perKm(directCosts).toFixed(3) + " €/km"],
+    ["Profit/km (net)", perKm(profitNet).toFixed(3) + " €/km"],
+    ["Profit/zi (net)", perDay(profitNet).toFixed(0) + " €/zi"],
+  ];
 
   return (
-    <div ref={ref} className="pdf-root" style={{ padding: 12 }}>
-      {/* Page 1: Header + Summary */}
-      <div className="page">
-        <div style={{ display:'flex', alignItems:'center', gap:12, marginBottom:12 }}>
-          <img src={LOGO_URL} alt="Pro Elite Distribution" style={{ height: 36 }} />
+    <div ref={ref} className="pdf-root" style={{ padding: 8, width: '277mm', minHeight: '190mm' }}>
+      <div style={{ display:'flex', alignItems:'center', justifyContent:'space-between', marginBottom: 8 }}>
+        <div style={{ display:'flex', alignItems:'center', gap:10 }}>
+          <div style={{ background:'#000', padding:'6px 10px', borderRadius:8 }}>
+            <img src="/logo-proelite.png" alt="Pro Elite Distribution" style={{ height: 20 }} />
+          </div>
           <div style={{ fontWeight:700, fontSize:16 }}>Raport profitabilitate camion</div>
         </div>
         <div className="small">Perioadă: {data.startDate} – {data.endDate}</div>
-
-        <div className="h2">Rezumat financiar</div>
-        <table className="table">
-          <tbody>
-            <tr><th>Încasări</th><td>{currency(data.revenue)}</td></tr>
-            <tr><th>Costuri directe</th><td>{currency(directCosts)}</td></tr>
-            <tr><th>Profit brut</th><td>{currency(profitBrut)}</td></tr>
-            <tr><th>Costuri totale (cu alte costuri)</th><td>{currency(totalCostsWithOverhead)}</td></tr>
-            <tr><th>Profit net</th><td>{currency(profitNet)}</td></tr>
-            <tr><th>Marjă brută</th><td>{percent(profitBrut, data.revenue).toFixed(1)}%</td></tr>
-            <tr><th>Marjă netă</th><td>{percent(profitNet, data.revenue).toFixed(1)}%</td></tr>
-          </tbody>
-        </table>
-
-        <div className="h2">Indicatori operaționali</div>
-        <table className="table">
-          <tbody>
-            <tr><th>Zile în lucru</th><td>{days} zile</td></tr>
-            <tr><th>Kilometri</th><td>{data.km.toLocaleString("ro-RO")} km</td></tr>
-            <tr><th>Consum estimat</th><td>{Math.round(liters)} L</td></tr>
-            <tr><th>Venit/km</th><td>{perKm(data.revenue).toFixed(3)} €/km</td></tr>
-            <tr><th>Cost/km (direct)</th><td>{perKm(directCosts).toFixed(3)} €/km</td></tr>
-            <tr><th>Profit/km (net)</th><td>{perKm(profitNet).toFixed(3)} €/km</td></tr>
-            <tr><th>Profit/zi (net)</th><td>{perDay(profitNet).toFixed(0)} €/zi</td></tr>
-          </tbody>
-        </table>
       </div>
 
-      {/* Page 2: Cost breakdown */}
-      <div className="page">
-        <div className="h2">Detaliu costuri</div>
-        <table className="table">
-          <thead>
-            <tr>
-              <th>Categoria</th>
-              <th>Suma</th>
-              <th>Pondere</th>
-            </tr>
-          </thead>
-          <tbody>
-            {costBreakdown.map((c) => (
-              <tr key={c.name}>
-                <td>{c.name}</td>
-                <td>{currency(c.value)}</td>
-                <td>{((c.value / (directCosts + (data.extraOverheadMonthly ? (months * data.extraOverheadMonthly) : 0))) * 100 || 0).toFixed(1)}%</td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
+      <div style={{ display:'flex', gap:12, alignItems:'flex-start' }}>
+        <div style={{ flex:1 }}>
+          <div className="h2">Rezumat financiar</div>
+          <table className="table">
+            <tbody>
+              {rowsFinance.map(([k, v]) => (
+                <tr key={k}><th>{k}</th><td>{typeof v === 'number' ? currency(v) : v}</td></tr>
+              ))}
+            </tbody>
+          </table>
 
-        <div style={{ marginTop: 12 }} className="small">
-          Notă: Valorile sunt estimative și depind de consum, preț motorină și taxe lunare.
+          <div className="h2">Indicatori operaționali</div>
+          <table className="table">
+            <tbody>
+              {rowsOps.map(([k, v]) => (
+                <tr key={k}><th>{k}</th><td>{v}</td></tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+
+        <div style={{ flex:1 }}>
+          <div className="h2">Detaliu costuri</div>
+          <table className="table">
+            <thead><tr><th>Categoria</th><th>Suma</th></tr></thead>
+            <tbody>
+              <tr><td>Motorină</td><td>{currency(fuelCost)}</td></tr>
+              <tr><td>Toll-uri</td><td>{currency((data.tolls || 0))}</td></tr>
+              <tr><td>Șofer ({days} zile × {data.driverPayPerDay} €/zi)</td><td>{currency(days * data.driverPayPerDay)}</td></tr>
+              <tr><td>Rată ansamblu (~{months.toFixed(1)} luni)</td><td>{currency(months * data.monthlyRate)}</td></tr>
+              <tr><td>Alte costuri (~{months.toFixed(1)} luni)</td><td>{currency(months * data.extraOverheadMonthly)}</td></tr>
+            </tbody>
+          </table>
+
+          <div className="small" style={{ marginTop: 8 }}>
+            Notă: Valorile sunt estimative și depind de consum, preț motorină și taxe lunare.
+          </div>
         </div>
       </div>
 
-      {/* Footer on last page */}
       <div style={{ textAlign:'center', fontSize:12, color:'#6b7280', marginTop:8 }}>
         Cristian Mandoiu, Pro Elite Ditribution 2025
       </div>

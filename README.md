@@ -1,15 +1,12 @@
-# Pro Elite Distribution – Calculator profitabilitate camion (PDF layout dedicat)
+# Pro Elite Distribution – Calculator profitabilitate camion (PDF4)
+- Header negru curat + linie gri (#2d2d2d)
+- Carduri profit în pagină; PDF landscape cu layout dedicat
+- Logo PNG local: `public/logo-proelite.png` (placeholder inclus)
 
-- Buton **Descarcă raport PDF** produce un PDF A4 curat (alb-negru, tabele, page breaks).
-- Raportul este un **layout separat** (nu clonă a paginii).
-
-## Instalare & rulare
-```bash
+## Rulare
 npm install
 npm run dev
-```
 
-## Deploy Netlify
-- Build: `npm run build`
-- Publish dir: `dist`
-- `public/_redirects` inclus.
+## Build / Netlify
+npm run build
+# publish = dist
