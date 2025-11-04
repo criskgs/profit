@@ -1,6 +1,6 @@
 # Pro Elite Distribution – Calculator profitabilitate camion (React + Vite + Tailwind)
 
-Branding inclus: antet cu logo și gradient roșu, temă dark inspirată din site, footer personalizat.
+Branding + **Export PDF** (buton în header).
 
 ## Instalare & rulare
 ```bash
@@ -11,4 +11,4 @@ npm run dev
 ## Deploy Netlify
 - Build: `npm run build`
 - Publish dir: `dist`
-- Fișier `public/_redirects` deja inclus.
+- `public/_redirects` inclus.

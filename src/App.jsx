@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from "react";
+import React, { useMemo, useRef, useState } from "react";
 import {
   PieChart,
   Pie,
@@ -12,6 +12,7 @@ import {
   CartesianGrid,
   Legend,
 } from "recharts";
+import html2pdf from "html2pdf.js";
 
 const LOGO_URL = "https://proelitedistribution.ro/wp-content/uploads/2025/10/proelite-logo-2-scaled.png";
 
@@ -27,6 +28,7 @@ function daysBetweenInclusive(startISO, endISO) {
 }
 
 export default function App() {
+  const reportRef = useRef(null);
   const todayISO = new Date().toISOString().slice(0, 10);
   const [data, setData] = useState({
     startDate: "2025-07-30",
@@ -102,18 +104,37 @@ export default function App() {
     setData((d) => ({ ...d, [field]: value }));
   }
 
+  function downloadPDF() {
+    const element = reportRef.current;
+    if (!element) return;
+    const opt = {
+      margin: 10,
+      filename: `raport-profit-camion-${data.startDate}_to_${data.endDate}.pdf`,
+      image: { type: "jpeg", quality: 0.95 },
+      html2canvas: { scale: 2, useCORS: true, backgroundColor: "#0B0B0B" },
+      jsPDF: { unit: "mm", format: "a4", orientation: "portrait" },
+      pagebreak: { mode: ["css", "legacy"] },
+    };
+    html2pdf().set(opt).from(element).save();
+  }
+
   return (
     <div className="min-h-screen bg-brand-dark text-white">
       {/* Header brand */}
-      <div className="bg-gradient-to-r from-brand-red to-brand-redLight">
-        <div className="max-w-6xl mx-auto px-6 py-4 flex items-center gap-4">
-          <img src={LOGO_URL} alt="Pro Elite Distribution" className="h-10 w-auto drop-shadow" />
-          <div className="text-lg/6 font-semibold tracking-wide">Calculator profitabilitate camion</div>
+      <div className="bg-gradient-to-r from-brand-red to-brand-redLight sticky top-0 z-10 no-print">
+        <div className="max-w-6xl mx-auto px-6 py-4 flex items-center justify-between gap-4">
+          <div className="flex items-center gap-4">
+            <img src={LOGO_URL} alt="Pro Elite Distribution" className="h-10 w-auto drop-shadow" />
+            <div className="text-lg/6 font-semibold tracking-wide">Calculator profitabilitate camion</div>
+          </div>
+          <button onClick={downloadPDF} className="px-4 py-2 rounded-xl bg-white text-black font-medium hover:opacity-90 shadow">
+            Descarcă PDF
+          </button>
         </div>
       </div>
 
-      {/* Content */}
-      <div className="max-w-6xl mx-auto px-6 py-6">
+      {/* Content to be exported */}
+      <div ref={reportRef} className="max-w-6xl mx-auto px-6 py-6">
         <p className="text-gray-300 mb-4">Introdu datele operaționale și vezi instant KPI-urile, costurile și profitul.</p>
 
         <div className="grid md:grid-cols-2 gap-4">
@@ -126,7 +147,7 @@ export default function App() {
               </div>
               <div>
                 <label className="text-sm text-gray-300">Data finală</label>
-                <input type="date" className="w-full mt-1 bg-neutral-900 border border-neutral-700 rounded-xl px-3 py-2" value={data.endDate} onChange={(e) => setField("endDate", e.target.value)} max={todayISO} />
+                <input type="date" className="w-full mt-1 bg-neutral-900 border border-neutral-700 rounded-xl px-3 py-2" value={data.endDate} onChange={(e) => setField("endDate", e.target.value)} />
               </div>
               <div>
                 <label className="text-sm text-gray-300">Încasări totale (€)</label>

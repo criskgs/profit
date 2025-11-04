@@ -9,6 +9,10 @@
   --brand-gray: #1F1F1F;
 }
 
-.glass {
-  backdrop-filter: blur(6px);
+.glass { backdrop-filter: blur(6px); }
+
+/* Stiluri pentru print (PDF) */
+@media print {
+  body { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  .no-print { display: none !important; }
 }
