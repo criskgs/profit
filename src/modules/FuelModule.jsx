@@ -1,5 +1,6 @@
 
 import React, { useMemo, useState } from "react";
+import { number } from "./utils.js";
 export default function FuelModule({reportRef}){
   const [distance,setDistance]=useState(0);
   const [avgConsumption,setAvgConsumption]=useState(28.5);

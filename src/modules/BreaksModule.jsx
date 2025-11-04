@@ -31,7 +31,7 @@ export default function BreaksModule({reportRef}){
         <div className='grid grid-cols-2 gap-2 text-sm'>
           <div>Condus (fără pauze)</div><div className='text-right font-semibold'>{pureDriveH.toFixed(2)} h</div>
           <div>Pauze necesare (45min/4h30)</div><div className='text-right font-semibold'>{breaks.toFixed(2)} h</div>
-          <div>Timp total estimat</div><div className='text-right font-semibold'>{totalTime.toFixed(2)} h</div>
+          <div>Timp total estimat</div><div className='text-right font-semibold'>{(totalTime).toFixed(2)} h</div>
           <div>Depășește 9h/zi?</div><div className='text-right font-semibold'>{needsDailyRest?'Da (atenție la regulă)':'Nu'}</div>
         </div>
         <div className='mt-3 border-t border-neutral-800 pt-2 text-sm'>

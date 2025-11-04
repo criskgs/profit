@@ -1,6 +1,7 @@
 
 import React, { useMemo, useState } from "react";
 import { ResponsiveContainer, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip as ReTooltip, Legend, PieChart, Pie, Cell } from "recharts";
+import { currency } from "./utils.js";
 
 function daysBetweenInclusive(startISO, endISO) {
   if (!startISO || !endISO) return 0;
@@ -8,7 +9,6 @@ function daysBetweenInclusive(startISO, endISO) {
   start.setHours(12,0,0,0); end.setHours(12,0,0,0);
   return Math.max(Math.floor((end-start)/(1000*60*60*24))+1,0);
 }
-const currency = (v, frac=0)=> isFinite(v) ? v.toLocaleString('ro-RO',{style:'currency',currency:'EUR',maximumFractionDigits:frac}) : '-';
 
 export default function ProfitModule({reportRef}){
   const [data,setData]=useState({ startDate:'2025-07-30', endDate:'2025-11-04', revenue:51855, km:43068, tolls:7338, avgConsumption:28.5, fuelPrice:1.35, driverPayPerDay:95, monthlyRate:2100, extraOverheadMonthly:900 });
