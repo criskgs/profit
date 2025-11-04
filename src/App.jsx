@@ -13,6 +13,8 @@ import {
   Legend,
 } from "recharts";
 
+const LOGO_URL = "https://proelitedistribution.ro/wp-content/uploads/2025/10/proelite-logo-2-scaled.png";
+
 function daysBetweenInclusive(startISO, endISO) {
   if (!startISO || !endISO) return 0;
   const start = new Date(startISO);
@@ -101,62 +103,68 @@ export default function App() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 p-6">
-      <div className="max-w-6xl mx-auto">
-        <header className="mb-6">
-          <h1 className="text-3xl font-bold">Calculator profitabilitate camion</h1>
-          <p className="text-gray-600 mt-1">Introdu datele operaționale și vezi instant KPI-urile, costurile și profitul.</p>
-        </header>
+    <div className="min-h-screen bg-brand-dark text-white">
+      {/* Header brand */}
+      <div className="bg-gradient-to-r from-brand-red to-brand-redLight">
+        <div className="max-w-6xl mx-auto px-6 py-4 flex items-center gap-4">
+          <img src={LOGO_URL} alt="Pro Elite Distribution" className="h-10 w-auto drop-shadow" />
+          <div className="text-lg/6 font-semibold tracking-wide">Calculator profitabilitate camion</div>
+        </div>
+      </div>
+
+      {/* Content */}
+      <div className="max-w-6xl mx-auto px-6 py-6">
+        <p className="text-gray-300 mb-4">Introdu datele operaționale și vezi instant KPI-urile, costurile și profitul.</p>
 
         <div className="grid md:grid-cols-2 gap-4">
-          <div className="bg-white p-4 rounded-2xl shadow">
+          <div className="bg-brand-gray p-4 rounded-2xl shadow-brand">
             <h2 className="text-xl font-semibold mb-3">Perioadă & volum</h2>
             <div className="grid grid-cols-2 gap-3">
               <div>
-                <label className="text-sm text-gray-600">Data start</label>
-                <input type="date" className="w-full mt-1 border rounded-xl px-3 py-2" value={data.startDate} onChange={(e) => setField("startDate", e.target.value)} />
+                <label className="text-sm text-gray-300">Data start</label>
+                <input type="date" className="w-full mt-1 bg-neutral-900 border border-neutral-700 rounded-xl px-3 py-2" value={data.startDate} onChange={(e) => setField("startDate", e.target.value)} />
               </div>
               <div>
-                <label className="text-sm text-gray-600">Data finală</label>
-                <input type="date" className="w-full mt-1 border rounded-xl px-3 py-2" value={data.endDate} onChange={(e) => setField("endDate", e.target.value)} max={todayISO} />
+                <label className="text-sm text-gray-300">Data finală</label>
+                <input type="date" className="w-full mt-1 bg-neutral-900 border border-neutral-700 rounded-xl px-3 py-2" value={data.endDate} onChange={(e) => setField("endDate", e.target.value)} max={todayISO} />
               </div>
               <div>
-                <label className="text-sm text-gray-600">Încasări totale (€)</label>
-                <input type="number" className="w-full mt-1 border rounded-xl px-3 py-2" value={data.revenue} onChange={(e) => setField("revenue", parseFloat(e.target.value || 0))} />
+                <label className="text-sm text-gray-300">Încasări totale (€)</label>
+                <input type="number" className="w-full mt-1 bg-neutral-900 border border-neutral-700 rounded-xl px-3 py-2" value={data.revenue} onChange={(e) => setField("revenue", parseFloat(e.target.value || 0))} />
               </div>
               <div>
-                <label className="text-sm text-gray-600">Km parcurși</label>
-                <input type="number" className="w-full mt-1 border rounded-xl px-3 py-2" value={data.km} onChange={(e) => setField("km", parseFloat(e.target.value || 0))} />
+                <label className="text-sm text-gray-300">Km parcurși</label>
+                <input type="number" className="w-full mt-1 bg-neutral-900 border border-neutral-700 rounded-xl px-3 py-2" value={data.km} onChange={(e) => setField("km", parseFloat(e.target.value || 0))} />
               </div>
             </div>
           </div>
 
-          <div className="bg-white p-4 rounded-2xl shadow">
+          <div className="bg-brand-gray p-4 rounded-2xl shadow-brand">
             <h2 className="text-xl font-semibold mb-3">Costuri unitare</h2>
             <div className="grid grid-cols-2 gap-3">
               <div>
-                <label className="text-sm text-gray-600">Consum mediu (L/100km)</label>
-                <input type="number" step="0.1" className="w-full mt-1 border rounded-xl px-3 py-2" value={data.avgConsumption} onChange={(e) => setField("avgConsumption", parseFloat(e.target.value || 0))} />
+                <label className="text-sm text-gray-300">Consum mediu (L/100km)</label>
+                <input type="number" step="0.1" className="w-full mt-1 bg-neutral-900 border border-neutral-700 rounded-xl px-3 py-2" value={data.avgConsumption} onChange={(e) => setField("avgConsumption", parseFloat(e.target.value || 0))} />
               </div>
               <div>
-                <label className="text-sm text-gray-600">Preț motorină (€/L)</label>
-                <input type="number" step="0.01" className="w-full mt-1 border rounded-xl px-3 py-2" value={data.fuelPrice} onChange={(e) => setField("fuelPrice", parseFloat(e.target.value || 0))} />
+                <label className="text-sm text-gray-300">Preț motorină (€/L)</label>
+                <input type="number" step="0.01" className="w-full mt-1 bg-neutral-900 border border-neutral-700 rounded-xl px-3 py-2" value={data.fuelPrice} onChange={(e) => setField("fuelPrice", parseFloat(e.target.value || 0))} />
               </div>
               <div>
-                <label className="text-sm text-gray-600">Taxe drum (toll-uri) (€)</label>
-                <input type="number" className="w-full mt-1 border rounded-xl px-3 py-2" value={data.tolls} onChange={(e) => setField("tolls", parseFloat(e.target.value || 0))} />
+                <label className="text-sm text-gray-300">Taxe drum (toll-uri) (€)</label>
+                <input type="number" className="w-full mt-1 bg-neutral-900 border border-neutral-700 rounded-xl px-3 py-2" value={data.tolls} onChange={(e) => setField("tolls", parseFloat(e.target.value || 0))} />
               </div>
               <div>
-                <label className="text-sm text-gray-600">Plată șofer (€/zi)</label>
-                <input type="number" className="w-full mt-1 border rounded-xl px-3 py-2" value={data.driverPayPerDay} onChange={(e) => setField("driverPayPerDay", parseFloat(e.target.value || 0))} />
+                <label className="text-sm text-gray-300">Plată șofer (€/zi)</label>
+                <input type="number" className="w-full mt-1 bg-neutral-900 border border-neutral-700 rounded-xl px-3 py-2" value={data.driverPayPerDay} onChange={(e) => setField("driverPayPerDay", parseFloat(e.target.value || 0))} />
               </div>
               <div>
-                <label className="text-sm text-gray-600">Rată ansamblu (€/lună)</label>
-                <input type="number" className="w-full mt-1 border rounded-xl px-3 py-2" value={data.monthlyRate} onChange={(e) => setField("monthlyRate", parseFloat(e.target.value || 0))} />
+                <label className="text-sm text-gray-300">Rată ansamblu (€/lună)</label>
+                <input type="number" className="w-full mt-1 bg-neutral-900 border border-neutral-700 rounded-xl px-3 py-2" value={data.monthlyRate} onChange={(e) => setField("monthlyRate", parseFloat(e.target.value || 0))} />
               </div>
               <div>
-                <label className="text-sm text-gray-600">Alte costuri (€/lună)</label>
-                <input type="number" className="w-full mt-1 border rounded-xl px-3 py-2" value={data.extraOverheadMonthly} onChange={(e) => setField("extraOverheadMonthly", parseFloat(e.target.value || 0))} />
+                <label className="text-sm text-gray-300">Alte costuri (€/lună)</label>
+                <input type="number" className="w-full mt-1 bg-neutral-900 border border-neutral-700 rounded-xl px-3 py-2" value={data.extraOverheadMonthly} onChange={(e) => setField("extraOverheadMonthly", parseFloat(e.target.value || 0))} />
               </div>
             </div>
           </div>
@@ -164,43 +172,43 @@ export default function App() {
 
         <div className="grid md:grid-cols-3 gap-4 mt-4">
           {kpi.map((k) => (
-            <div key={k.label} className="bg-white p-4 rounded-2xl shadow">
-              <div className="text-sm text-gray-500">{k.label}</div>
+            <div key={k.label} className="bg-brand-gray p-4 rounded-2xl shadow-brand">
+              <div className="text-sm text-gray-300">{k.label}</div>
               <div className="text-2xl font-bold mt-1">
-                {k.value} <span className="text-base font-medium text-gray-500">{k.suffix}</span>
+                {k.value} <span className="text-base font-medium text-gray-400">{k.suffix}</span>
               </div>
             </div>
           ))}
         </div>
 
         <div className="grid lg:grid-cols-3 gap-4 mt-4">
-          <div className="bg-white p-4 rounded-2xl shadow lg:col-span-2">
+          <div className="bg-brand-gray p-4 rounded-2xl shadow-brand lg:col-span-2">
             <h2 className="text-xl font-semibold mb-3">Venituri, costuri și profit</h2>
             <div className="grid md:grid-cols-2 gap-3">
-              <div className="bg-gray-50 p-3 rounded-xl">
-                <div className="text-sm text-gray-600">Costuri directe</div>
-                <div className="text-2xl font-bold">{currency(directCosts)}</div>
-                <div className="text-sm text-gray-600 mt-1">Cost/km: {perKm(directCosts).toFixed(3)} €</div>
+              <div className="bg-neutral-900 p-3 rounded-xl border border-neutral-800">
+                <div className="text-sm text-gray-300">Costuri directe</div>
+                <div className="text-2xl font-bold text-brand-red">{currency(directCosts)}</div>
+                <div className="text-sm text-gray-400 mt-1">Cost/km: {perKm(directCosts).toFixed(3)} €</div>
               </div>
-              <div className="bg-gray-50 p-3 rounded-xl">
-                <div className="text-sm text-gray-600">Costuri totale (cu alte costuri)</div>
+              <div className="bg-neutral-900 p-3 rounded-xl border border-neutral-800">
+                <div className="text-sm text-gray-300">Costuri totale (cu alte costuri)</div>
                 <div className="text-2xl font-bold">{currency(totalCostsWithOverhead)}</div>
-                <div className="text-sm text-gray-600 mt-1">Cost/km: {perKm(totalCostsWithOverhead).toFixed(3)} €</div>
+                <div className="text-sm text-gray-400 mt-1">Cost/km: {perKm(totalCostsWithOverhead).toFixed(3)} €</div>
               </div>
-              <div className="bg-gray-50 p-3 rounded-xl">
-                <div className="text-sm text-gray-600">Profit brut</div>
-                <div className="text-2xl font-bold">{currency(profitBrut)}</div>
-                <div className="text-sm text-gray-600 mt-1">Marjă brută: {percent(profitBrut, data.revenue).toFixed(1)}%</div>
+              <div className="bg-neutral-900 p-3 rounded-xl border border-neutral-800">
+                <div className="text-sm text-gray-300">Profit brut</div>
+                <div className="text-2xl font-bold text-emerald-400">{currency(profitBrut)}</div>
+                <div className="text-sm text-gray-400 mt-1">Marjă brută: {percent(profitBrut, data.revenue).toFixed(1)}%</div>
               </div>
-              <div className="bg-gray-50 p-3 rounded-xl">
-                <div className="text-sm text-gray-600">Profit net</div>
-                <div className="text-2xl font-bold">{currency(profitNet)}</div>
-                <div className="text-sm text-gray-600 mt-1">Marjă netă: {percent(profitNet, data.revenue).toFixed(1)}%</div>
+              <div className="bg-neutral-900 p-3 rounded-xl border border-neutral-800">
+                <div className="text-sm text-gray-300">Profit net</div>
+                <div className="text-2xl font-bold text-emerald-400">{currency(profitNet)}</div>
+                <div className="text-sm text-gray-400 mt-1">Marjă netă: {percent(profitNet, data.revenue).toFixed(1)}%</div>
               </div>
             </div>
 
             <div className="mt-4 grid md:grid-cols-2 gap-4">
-              <div className="h-72 bg-white border rounded-2xl p-3">
+              <div className="h-72 bg-neutral-900 border border-neutral-800 rounded-2xl p-3">
                 <ResponsiveContainer width="100%" height="100%">
                   <BarChart data={barData}>
                     <CartesianGrid strokeDasharray="3 3" />
@@ -217,7 +225,7 @@ export default function App() {
                 </ResponsiveContainer>
               </div>
 
-              <div className="h-72 bg-white border rounded-2xl p-3">
+              <div className="h-72 bg-neutral-900 border border-neutral-800 rounded-2xl p-3">
                 <ResponsiveContainer width="100%" height="100%">
                   <PieChart>
                     <Pie data={costBreakdown} dataKey="value" nameKey="name" outerRadius={85}>
@@ -233,7 +241,7 @@ export default function App() {
             </div>
           </div>
 
-          <div className="bg-white p-4 rounded-2xl shadow">
+          <div className="bg-brand-gray p-4 rounded-2xl shadow-brand">
             <h2 className="text-xl font-semibold mb-3">Detaliu costuri</h2>
             <ul className="space-y-2">
               <li className="flex justify-between"><span>Motorină ({liters.toFixed(0)} L)</span><span>{currency(fuelCost)}</span></li>
@@ -242,11 +250,11 @@ export default function App() {
               <li className="flex justify-between"><span>Rată ansamblu (~{months.toFixed(1)} luni)</span><span>{currency(rateCost)}</span></li>
               <li className="flex justify-between"><span>Alte costuri (~{months.toFixed(1)} luni)</span><span>{currency(overheadCost)}</span></li>
             </ul>
-            <div className="border-t mt-3 pt-3 flex justify-between font-semibold">
+            <div className="border-t border-neutral-800 mt-3 pt-3 flex justify-between font-semibold">
               <span>Total costuri</span>
               <span>{currency(totalCostsWithOverhead)}</span>
             </div>
-            <div className="mt-3 p-3 bg-gray-50 rounded-xl text-sm text-gray-700">
+            <div className="mt-3 p-3 bg-neutral-900 rounded-xl text-sm text-gray-300 border border-neutral-800">
               <p>
                 <strong>Sfaturi:</strong> testează sensibilitatea prin modificarea consumului, prețului motorinei și a costurilor lunare.
                 Vezi cum se schimbă profitul/km și marjele.
@@ -255,8 +263,8 @@ export default function App() {
           </div>
         </div>
 
-        <footer className="text-center text-gray-500 text-sm mt-6">
-          Făcut pentru scenariul tău: 30.07 → 04.11, încasări 51.855 €, 43.068 km, toll-uri 7.338 €, consum 28,5 L/100km, șofer 95 €/zi, rată 2.100 €/lună.
+        <footer className="text-center text-gray-400 text-sm mt-8">
+          Cristian Mandoiu, Pro Elite Ditribution 2025
         </footer>
       </div>
     </div>

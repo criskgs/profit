@@ -1,3 +1,14 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+:root {
+  --brand-red: #D20E11;
+  --brand-red-light: #FF2A2A;
+  --brand-dark: #0B0B0B;
+  --brand-gray: #1F1F1F;
+}
+
+.glass {
+  backdrop-filter: blur(6px);
+}
